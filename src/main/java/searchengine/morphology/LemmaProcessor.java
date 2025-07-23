@@ -18,6 +18,7 @@ import searchengine.repository.LemmaRepository;
 import searchengine.repository.PageRepository;
 import searchengine.repository.SiteRepository;
 
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -28,7 +29,7 @@ import java.util.*;
 @RequestMapping("/api")
 public class LemmaProcessor {
 
-    private final LuceneMorphology luceneMorphology;
+    private LuceneMorphology luceneMorphology;
 
     @Autowired
     private PageRepository pageRepository;
@@ -42,52 +43,74 @@ public class LemmaProcessor {
     @Autowired
     private SiteRepository siteRepository;
 
-    public LemmaProcessor() throws Exception {
+    @PostConstruct
+    public void init() throws Exception {
         this.luceneMorphology = new RussianLuceneMorphology();
     }
 
-    public Map<String, Integer> collectLemmas(String text) {
-        Map<String, Integer> lemmaCount = new HashMap<>();
-        String cleanText = Jsoup.parse(text).text().toLowerCase();
+    /**
+     * Очищает HTML и сохраняет леммы в таблицы lemma и index.
+     */
+    @Transactional
+    public void processAndSaveLemmas(String html, Site site, Page page) {
+        String text = Jsoup.parse(html).text(); // удаляем HTML-теги
+        Map<String, Integer> lemmaMap = collectLemmas(text);
 
-        String[] words = cleanText.split("[^а-яё]+");
+        for (Map.Entry<String, Integer> entry : lemmaMap.entrySet()) {
+            String lemmaStr = entry.getKey();
+            int count = entry.getValue();
+
+            Lemma lemma = lemmaRepository.findByLemmaAndSite(lemmaStr, site)
+                    .orElseGet(() -> {
+                        Lemma newLemma = new Lemma();
+                        newLemma.setLemma(lemmaStr);
+                        newLemma.setSite(site);
+                        newLemma.setFrequency(0);
+                        return newLemma;
+                    });
+
+            lemma.setFrequency(lemma.getFrequency() + 1);
+            lemma = lemmaRepository.save(lemma);
+
+            Index index = new Index();
+            index.setPage(page);
+            index.setLemma(lemma);
+            index.setRank((float) count);
+            indexRepository.save(index);
+        }
+    }
+
+    /**
+     * Разбивает текст на слова, фильтрует служебные части речи и возвращает леммы с частотами.
+     */
+    public Map<String, Integer> collectLemmas(String text) {
+        Map<String, Integer> lemmas = new HashMap<>();
+        String[] words = text.toLowerCase().split("[^а-яА-Яa-zA-Z]+");
+
         for (String word : words) {
             if (word.isBlank()) continue;
-            if (!luceneMorphology.checkString(word)) continue;
 
-            List<String> morphInfo = luceneMorphology.getMorphInfo(word);
-            if (isServicePart(morphInfo)) continue;
+            try {
+                List<String> morphInfo = luceneMorphology.getMorphInfo(word);
+                if (morphInfo.stream().anyMatch(this::isServicePartOfSpeech)) continue;
 
-            List<String> normalForms = luceneMorphology.getNormalForms(word);
-            String lemma = normalForms.get(0);
-
-            lemmaCount.put(lemma, lemmaCount.getOrDefault(lemma, 0) + 1);
-        }
-        return lemmaCount;
-    }
-
-    private boolean isServicePart(List<String> morphInfo) {
-        for (String info : morphInfo) {
-            if (info.contains("СОЮЗ") ||
-                    info.contains("ПРЕДЛ") ||
-                    info.contains("МЕЖД") ||
-                    info.contains("ЧАСТ")) {
-                return true;
+                List<String> normalForms = luceneMorphology.getNormalForms(word);
+                if (!normalForms.isEmpty()) {
+                    String lemma = normalForms.get(0);
+                    lemmas.put(lemma, lemmas.getOrDefault(lemma, 0) + 1);
+                }
+            } catch (Exception ignored) {
+                // игнорируем слова, которые не удаётся распознать
             }
         }
-        return false;
+        return lemmas;
     }
 
-    public String cleanHtml(String html) {
-        return Jsoup.parse(html).text();
-    }
-
-    public String getSiteUrl(String url) {
-        try {
-            URL u = new URL(url);
-            return u.getProtocol() + "://" + u.getHost();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+    /**
+     * Проверяет, является ли слово служебной частью речи.
+     */
+    private boolean isServicePartOfSpeech(String morph) {
+        return morph.contains("СОЮЗ") || morph.contains("МЕЖД") ||
+                morph.contains("ПРЕДЛ") || morph.contains("ЧАСТ");
     }
 }

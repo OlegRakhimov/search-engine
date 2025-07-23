@@ -10,8 +10,12 @@ public interface PageRepository extends JpaRepository<Page, Integer> {
 
     void deleteAllBySite(Site site);
 
+    void deleteByPathAndSite(String path, Site site);
+
+
     Optional<Page> findByPathAndSite(String path, Site site);
 
-    long countBySite(Site site);
+    long countBySiteId(int siteId);
+
 
 }

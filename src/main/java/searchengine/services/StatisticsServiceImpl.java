@@ -29,7 +29,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         TotalStatistics total = new TotalStatistics();
         total.setSites((int) siteRepository.count());
         total.setPages((int) pageRepository.count());
-        total.setLemmas((int) lemmaRepository.count()); // Фикс: считаем леммы из БД
+        total.setLemmas((int) lemmaRepository.count());
         total.setIndexing(indexingService.isIndexing());
 
         List<DetailedStatisticsItem> detailed = new ArrayList<>();
@@ -39,13 +39,14 @@ public class StatisticsServiceImpl implements StatisticsService {
             DetailedStatisticsItem item = new DetailedStatisticsItem();
             item.setName(site.getName());
             item.setUrl(site.getUrl());
-            item.setPages((int) pageRepository.countBySite(site));   // Фикс: считаем страницы по сайту
-            item.setLemmas((int) lemmaRepository.countBySite(site)); // Фикс: считаем леммы по сайту
+            item.setPages((int) pageRepository.countBySiteId(site.getId()));   // <-- именно так
+            item.setLemmas((int) lemmaRepository.countBySiteId(site.getId())); // <-- именно так
             item.setStatus(site.getStatus().toString());
             item.setError(site.getLastError() != null ? site.getLastError() : "");
             item.setStatusTime(System.currentTimeMillis());
             detailed.add(item);
         }
+
 
         StatisticsData data = new StatisticsData();
         data.setTotal(total);

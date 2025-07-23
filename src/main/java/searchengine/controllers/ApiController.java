@@ -46,6 +46,18 @@ public class ApiController {
         }
         return ResponseEntity.ok(response);
     }
+    @PostMapping("/indexPage")
+    public ResponseEntity<Map<String, Object>> indexPage(@RequestParam String url) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            indexingService.indexPage(url); // Этот метод должен быть реализован в IndexingService
+            response.put("result", true);
+        } catch (Exception e) {
+            response.put("result", false);
+            response.put("error", e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
 
     @GetMapping("/statistics")
     public ResponseEntity<StatisticsResponse> statistics() {

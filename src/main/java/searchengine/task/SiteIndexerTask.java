@@ -71,7 +71,7 @@ public class SiteIndexerTask extends RecursiveAction {
 
                 String link = element.absUrl("href");
 
-                if (link.startsWith(site.getUrl()) && !visited.contains(link)) {
+                if (isValidLink(link)) {
                     tasks.add(new SiteIndexerTask(link, site, pageRepository, visited));
                 }
             }
@@ -79,9 +79,19 @@ public class SiteIndexerTask extends RecursiveAction {
             invokeAll(tasks);
 
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // Корректно прерываем поток
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             throw new RuntimeException("Ошибка при обходе " + url + ": " + e.getMessage(), e);
         }
+    }
+
+    private boolean isValidLink(String link) {
+        return link.startsWith(site.getUrl()) &&
+                !visited.contains(link) &&
+                !link.contains("#") &&
+                !link.contains("?") &&
+                !link.matches(".*(\\.jpg|\\.png|\\.gif|\\.pdf|\\.doc|\\.css|\\.js)$") &&
+                !link.startsWith("mailto:") &&
+                !link.startsWith("tel:");
     }
 }
