@@ -1,7 +1,10 @@
 package searchengine.model;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 
+@Getter
 @Entity
 @Table(
         name = "page",
@@ -17,38 +20,29 @@ public class Page {
     @JoinColumn(name = "site_id", nullable = false)
     private Site site;
 
-    @Column(name = "path", columnDefinition = "TEXT", nullable = false)
+    // Исправлено: используем length = 255 вместо columnDefinition = "TEXT"
+    @Column(name = "path", length = 255, nullable = false)
     private String path;
 
     @Column(name = "code", nullable = false)
     private int code;
 
+    // content может быть длинным, поэтому MEDIUMTEXT оставляем
     @Column(name = "content", columnDefinition = "MEDIUMTEXT", nullable = false)
     private String content;
 
-    public int getId() {
-        return id; }
     public void setId(int id) {
         this.id = id; }
 
-    public Site getSite() {
-        return site; }
     public void setSite(Site site) {
         this.site = site; }
 
-    public String getPath() {
-        return path; }
     public void setPath(String path) {
         this.path = path; }
 
-    public int getCode() {
-        return code; }
     public void setCode(int code) {
         this.code = code; }
 
-    public String getContent() {
-        return content; }
     public void setContent(String content) {
         this.content = content; }
 }
-

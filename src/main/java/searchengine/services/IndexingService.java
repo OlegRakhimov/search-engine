@@ -14,6 +14,7 @@ import searchengine.repository.PageRepository;
 import searchengine.repository.SiteRepository;
 import searchengine.task.SiteIndexerTask;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -43,6 +44,7 @@ public class IndexingService {
         this.lemmaProcessor = lemmaProcessor;
     }
 
+    @Transactional
     public synchronized void startIndexing() {
         if (indexing) {
             throw new RuntimeException("Индексация уже запущена");

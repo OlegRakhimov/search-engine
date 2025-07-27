@@ -21,16 +21,16 @@ public class PageIndex {
     @JoinColumn(name = "lemma_id", nullable = false)
     private Lemma lemma;
 
-    @Column(nullable = false)
-    private float rank;
+    @Column(name = "page_rank", nullable = false)
+    private float pageRank;
 
     public PageIndex() {
     }
 
-    public PageIndex(Page page, Lemma lemma, float rank) {
+    public PageIndex(Page page, Lemma lemma, float pageRank) {
         this.page = page;
         this.lemma = lemma;
-        this.rank = rank;
+        this.pageRank = pageRank;
     }
 
     public void setPage(Page page) {
@@ -42,8 +42,8 @@ public class PageIndex {
         this.lemma = lemma;
     }
 
-    public void setRank(float rank) {
+    public void setRank(float pageRank) {
 
-        this.rank = rank;
+        this.pageRank = pageRank;
     }
 }

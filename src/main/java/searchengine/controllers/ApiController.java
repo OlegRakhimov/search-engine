@@ -79,6 +79,6 @@ public class ApiController {
     public ResponseEntity<List<SiteConfig>> printSites() {
         List<SiteConfig> sites = indexingSettings.getSites();
         sites.forEach(site -> System.out.println(site.getUrl() + " — " + site.getName()));
-        return ResponseEntity.ok(sites); // Можно вернуть список как JSON
+        return ResponseEntity.ok(sites);
     }
 }
