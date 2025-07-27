@@ -2,7 +2,6 @@ package searchengine.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import searchengine.model.Site;
 
 import javax.persistence.*;
 

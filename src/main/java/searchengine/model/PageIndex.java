@@ -1,10 +1,13 @@
 package searchengine.model;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 
+@Getter
 @Entity
-@Table(name = "index_table") // так как \"index\" зарезервированное слово в SQL
-public class Index {
+@Table(name = "page_index")
+public class PageIndex {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,41 +24,26 @@ public class Index {
     @Column(nullable = false)
     private float rank;
 
-    public Index() {}
+    public PageIndex() {
+    }
 
-    public Index(Page page, Lemma lemma, float rank) {
+    public PageIndex(Page page, Lemma lemma, float rank) {
         this.page = page;
         this.lemma = lemma;
         this.rank = rank;
-    }
-
-    // Getters and Setters
-
-    public int getId() {
-        return id;
-    }
-
-    public Page getPage() {
-        return page;
     }
 
     public void setPage(Page page) {
         this.page = page;
     }
 
-    public Lemma getLemma() {
-        return lemma;
-    }
-
     public void setLemma(Lemma lemma) {
+
         this.lemma = lemma;
     }
 
-    public float getRank() {
-        return rank;
-    }
-
     public void setRank(float rank) {
+
         this.rank = rank;
     }
 }

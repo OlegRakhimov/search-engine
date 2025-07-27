@@ -2,7 +2,6 @@ package searchengine.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import lombok.Data;
 
 @Entity
 @Table(name = "site")
