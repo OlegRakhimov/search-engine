@@ -1,6 +1,5 @@
 package searchengine.morphology;
 
-import org.apache.lucene.morphology.LuceneMorphology;
 import org.apache.lucene.morphology.russian.RussianLuceneMorphology;
 
 import java.util.HashMap;

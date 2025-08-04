@@ -27,33 +27,57 @@ public class Site {
     @Column(name = "name", columnDefinition = "VARCHAR(255)", nullable = false)
     private String name;
 
-    public int getId() {
-        return id; }
-    public void setId(int id) {
-        this.id = id; }
+    public int getId()
+    {
+        return id;
+    }
+    public void setId(int id)
+    {
+        this.id = id;
+    }
 
-    public Status getStatus() {
-        return status; }
-    public void setStatus(Status status) {
-        this.status = status; }
+    public Status getStatus()
+    {
+        return status;
+    }
+    public void setStatus(Status status)
+    {
+        this.status = status;
+    }
 
-    public LocalDateTime getStatusTime() {
-        return statusTime; }
-    public void setStatusTime(LocalDateTime statusTime) {
-        this.statusTime = statusTime; }
+    public LocalDateTime getStatusTime()
+    {
+        return statusTime;
+    }
+    public void setStatusTime(LocalDateTime statusTime)
+    {
+        this.statusTime = statusTime;
+    }
 
-    public String getLastError() {
-        return lastError; }
-    public void setLastError(String lastError) {
-        this.lastError = lastError; }
+    public String getLastError()
+    {
+        return lastError;
+    }
+    public void setLastError(String lastError)
+    {
+        this.lastError = lastError;
+    }
 
-    public String getUrl() {
-        return url; }
-    public void setUrl(String url) {
-        this.url = url; }
+    public String getUrl()
+    {
+        return url;
+    }
+    public void setUrl(String url)
+    {
+        this.url = url;
+    }
 
-    public String getName() {
-        return name; }
-    public void setName(String name) {
-        this.name = name; }
+    public String getName()
+    {
+        return name;
+    }
+    public void setName(String name)
+    {
+        this.name = name;
+    }
 }

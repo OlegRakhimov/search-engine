@@ -7,6 +7,7 @@ import org.jsoup.select.Elements;
 import searchengine.model.Page;
 import searchengine.model.Site;
 import searchengine.repository.PageRepository;
+import searchengine.morphology.LemmaProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +21,14 @@ public class SiteIndexerTask extends RecursiveAction {
     private final Site site;
     private final PageRepository pageRepository;
     private final Set<String> visited;
+    private final LemmaProcessor lemmaProcessor;
 
-    public SiteIndexerTask(String url, Site site, PageRepository pageRepository, Set<String> visited) {
+    public SiteIndexerTask(String url, Site site, PageRepository pageRepository, Set<String> visited, LemmaProcessor lemmaProcessor) {
         this.url = url;
         this.site = site;
         this.pageRepository = pageRepository;
         this.visited = visited;
+        this.lemmaProcessor = lemmaProcessor;
     }
 
     @Override
@@ -61,6 +64,8 @@ public class SiteIndexerTask extends RecursiveAction {
             page.setContent(doc.html());
             pageRepository.save(page);
 
+            lemmaProcessor.processAndSaveLemmas(page.getContent(), site, page);
+
             Elements links = doc.select("a[href]");
             List<SiteIndexerTask> tasks = new ArrayList<>();
 
@@ -72,7 +77,7 @@ public class SiteIndexerTask extends RecursiveAction {
                 String link = element.absUrl("href");
 
                 if (isValidLink(link)) {
-                    tasks.add(new SiteIndexerTask(link, site, pageRepository, visited));
+                    tasks.add(new SiteIndexerTask(link, site, pageRepository, visited, lemmaProcessor)); // <--- передаем lemmaProcessor
                 }
             }
 

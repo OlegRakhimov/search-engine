@@ -13,6 +13,8 @@ import searchengine.morphology.LemmaProcessor;
 import searchengine.repository.PageRepository;
 import searchengine.repository.SiteRepository;
 import searchengine.task.SiteIndexerTask;
+import searchengine.morphology.LemmaProcessor;
+import searchengine.task.SiteIndexerTask;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -71,7 +73,7 @@ public class IndexingService {
             Site savedSite = siteRepository.save(newSite);
 
             Set<String> visited = new HashSet<>();
-            pool.submit(new SiteIndexerTask(siteUrl, savedSite, pageRepository, visited));
+            pool.submit(new SiteIndexerTask(siteUrl, savedSite, pageRepository, visited, lemmaProcessor));
         }
     }
 
