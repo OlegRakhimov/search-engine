@@ -17,5 +17,7 @@ public interface PageRepository extends JpaRepository<Page, Integer> {
 
     long countBySiteId(int siteId);
 
+    long countBySite(Site site);
+
 
 }

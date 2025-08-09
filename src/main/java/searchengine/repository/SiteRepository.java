@@ -12,4 +12,6 @@ public interface SiteRepository extends JpaRepository<Site, Integer> {
     void deleteByUrl(String url);
 
     boolean existsByUrl(String url);
+
+    Optional<Site> findById(int id);
 }

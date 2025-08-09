@@ -38,12 +38,14 @@ public class PageIndex {
     }
 
     public void setLemma(Lemma lemma) {
-
         this.lemma = lemma;
     }
 
-    public void setRank(float pageRank) {
-
+    public void setPageRank(float pageRank) {
         this.pageRank = pageRank;
+    }
+
+    public float getPageRank() {
+        return pageRank;
     }
 }
