@@ -1,46 +1,34 @@
 package searchengine.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
-@Getter
 @Entity
-@Table(
-        name = "page",
-        indexes = {@javax.persistence.Index(columnList = "path")}
-)
+@Table(name = "page", indexes = @Index(name = "idx_page_path", columnList = "path"))
+@Getter
+@Setter
+@NoArgsConstructor
 public class Page {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "site_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "site_id", foreignKey = @ForeignKey(name = "fk_page_site"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Site site;
 
-    @Column(name = "path", length = 255, nullable = false)
+    @Column(name = "path", nullable = false, length = 512)
     private String path;
 
-    @Column(name = "code", nullable = false)
+    @Column(nullable = false)
     private int code;
 
-    @Column(name = "content", columnDefinition = "MEDIUMTEXT", nullable = false)
+    @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
     private String content;
-
-    public void setId(int id) {
-        this.id = id; }
-
-    public void setSite(Site site) {
-        this.site = site; }
-
-    public void setPath(String path) {
-        this.path = path; }
-
-    public void setCode(int code) {
-        this.code = code; }
-
-    public void setContent(String content) {
-        this.content = content; }
 }

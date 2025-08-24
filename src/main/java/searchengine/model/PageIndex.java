@@ -1,51 +1,32 @@
 package searchengine.model;
 
 import lombok.Getter;
-
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import javax.persistence.*;
 
-@Getter
 @Entity
-@Table(name = "page_index")
+@Table(
+        name = "page_index",
+        uniqueConstraints = @UniqueConstraint(name = "uq_page_lemma", columnNames = {"page_id","lemma_id"})
+)
+@Getter @Setter @NoArgsConstructor
 public class PageIndex {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "page_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "page_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_index_page"))
     private Page page;
 
-    @ManyToOne
-    @JoinColumn(name = "lemma_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "lemma_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_index_lemma"))
     private Lemma lemma;
 
-    @Column(name = "page_rank", nullable = false)
-    private float pageRank;
-
-    public PageIndex() {
-    }
-
-    public PageIndex(Page page, Lemma lemma, float pageRank) {
-        this.page = page;
-        this.lemma = lemma;
-        this.pageRank = pageRank;
-    }
-
-    public void setPage(Page page) {
-        this.page = page;
-    }
-
-    public void setLemma(Lemma lemma) {
-        this.lemma = lemma;
-    }
-
-    public void setPageRank(float pageRank) {
-        this.pageRank = pageRank;
-    }
-
-    public float getPageRank() {
-        return pageRank;
-    }
+    @Column(name = "rank_value", nullable = false)
+    private float rank;
 }

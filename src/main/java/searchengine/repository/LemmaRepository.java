@@ -9,13 +9,8 @@ import java.util.Optional;
 
 public interface LemmaRepository extends JpaRepository<Lemma, Integer> {
     Optional<Lemma> findByLemmaAndSite(String lemma, Site site);
-
     long countBySiteId(int siteId);
-
     List<Lemma> findByLemmaInAndSiteId(List<String> lemmas, int siteId);
-
     List<Lemma> findByLemmaIn(List<String> lemmas);
-
-
+    void deleteAllBySite(Site site);
 }
-
